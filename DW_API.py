@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[5]:
+# In[1]:
 
 
 import uvicorn
@@ -60,7 +60,7 @@ async def get_all_details():
 @app.get("/api/v1/inventory/aging-report", tags=["Inventory Aging"])
 async def get_aging_report(
     lot_no: Optional[List[str]] = Query(None, description="批號 (可重複輸入多個參數)"),
-    internal_part_no: Optional[str] = Query(None, description="料號 (單一值查詢)")
+    item_desc: Optional[str] = Query(None, description="料號 (單一值查詢)")
 ):
     """獲取在庫天數分析報表"""
     base_sql = "SELECT * FROM [APL].[invertory_aging_dtl]"
@@ -73,7 +73,7 @@ async def get_aging_report(
         all_params.extend(lot_no)
     
     if internal_part_no:
-        conditions.append("[internal_part_no] = ?")
+        conditions.append("[item_desc] = ?")
         all_params.append(internal_part_no)
 
     sql = base_sql
@@ -86,7 +86,7 @@ async def get_aging_report(
         "status": "success",
         "filters_applied": {
             "lot_no": lot_no, 
-            "internal_part_no": internal_part_no
+            "item_desc": item_desc
         },
         "count": len(data),
         "data": data
@@ -134,6 +134,12 @@ if __name__ == "__main__":
         asyncio.run(main())
     except KeyboardInterrupt:
         print("\nAPI 服務已由使用者關閉")
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:

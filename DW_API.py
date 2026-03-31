@@ -72,9 +72,9 @@ async def get_aging_report(
         conditions.append(f"[lot_no] IN ({placeholders})")
         all_params.extend(lot_no)
     
-    if internal_part_no:
+    if item_desc:
         conditions.append("[item_desc] = ?")
-        all_params.append(internal_part_no)
+        all_params.append(item_desc)
 
     sql = base_sql
     if conditions:

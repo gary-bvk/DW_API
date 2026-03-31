@@ -75,7 +75,8 @@ async def get_all_details():
 @app.get("/api/v1/inventory/aging-report", tags=["Inventory Aging"])
 async def get_aging_report(
     lot_no: Optional[List[str]] = Query(None, description="批號 (可重複輸入多個參數)"),
-    item_desc: Optional[str] = Query(None, description="料號 (單一值查詢)")
+    item_desc: Optional[str] = Query(None, description="料號 (單一值查詢)"),
+    storage_location: Optional[str] = Query(None, description="倉別 (單一值查詢)")
 ):
     """獲取在庫天數分析報表"""
     base_sql = "SELECT * FROM [APL].[invertory_aging_dtl]"
@@ -90,6 +91,10 @@ async def get_aging_report(
     if item_desc:
         conditions.append("[item_desc] = ?")
         all_params.append(item_desc)
+        
+    if storage_location:
+        conditions.append("[storage_location] = ?")
+        all_params.append(storage_location)
 
     sql = base_sql
     if conditions:
@@ -101,7 +106,8 @@ async def get_aging_report(
         "status": "success",
         "filters_applied": {
             "lot_no": lot_no, 
-            "item_desc": item_desc
+            "item_desc": item_desc,
+            "storage_location": storage_location
         },
         "count": len(data),
         "data": data
